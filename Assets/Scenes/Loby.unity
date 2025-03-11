@@ -563,6 +563,7 @@ GameObject:
   - component: {fileID: 2052628326}
   - component: {fileID: 2052628325}
   - component: {fileID: 2052628328}
+  - component: {fileID: 2052628329}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -633,7 +634,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pressAnyKeyText: {fileID: 766170119}
-  gameScene: 
+  gameSceneName: Game
+  keyPressSound: {fileID: 8300000, guid: e1dbe443075cc924d8ced1fa4f1b4500, type: 3}
+--- !u!114 &2052628329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052628324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48bd997d9fb055546ad2c2e6d57065d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  backgroundMusic: {fileID: 8300000, guid: 0acfb72dbe7932f4d84facd8a2aedf90, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

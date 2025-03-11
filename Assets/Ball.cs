@@ -1,28 +1,33 @@
 using UnityEngine;
-using UnityEngine.UI;
 
-public class BallController : MonoBehaviour
+public class Ball : MonoBehaviour
 {
     public float speed = 7f;
-    private Rigidbody2D rb;
+    [HideInInspector] public Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
 
-    // Ãß°¡: ½Â¸®/ÆĞ¹è ÅØ½ºÆ® ÂüÁ¶
-    public GameObject winText;
-    public GameObject loseText;
+    // ì¶”ê°€: íŠ•ê¸¸ ë•Œ ì¬ìƒí•  íš¨ê³¼ìŒ
+    public AudioClip bounceSound;
+    public AudioClip PlayerScoredSound;
+    public AudioClip AiScoredSound;
+    private AudioSource audioSource;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        LaunchBall();
 
-        // ½ÃÀÛ ½Ã ÅØ½ºÆ® ¼û±è
-        winText.SetActive(false);
-        loseText.SetActive(false);
+        // AudioSource ì»´í¬ë„ŒíŠ¸ ê°€ì ¸ì˜¤ê¸° ë˜ëŠ” ì¶”ê°€
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        LaunchBall();
     }
 
-    void LaunchBall()
+    public void LaunchBall()
     {
         Vector2[] directions =
         {
@@ -34,22 +39,40 @@ public class BallController : MonoBehaviour
 
         Vector2 initialDir = directions[Random.Range(0, directions.Length)].normalized;
         rb.velocity = initialDir * speed;
+        rb.isKinematic = false;
+        spriteRenderer.color = Color.white;
     }
 
-    // Goal Ãæµ¹ ½Ã ½ÂÆĞ ÆÇÁ¤ Ãß°¡
+    public void StopBall()
+    {
+        rb.velocity = Vector2.zero;
+        rb.isKinematic = true;
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        // Goal íƒœê·¸ê°€ ì•„ë‹Œ ì¶©ëŒ ì‹œ íŠ•ê¸°ëŠ” íš¨ê³¼ìŒ ì¬ìƒ
+        if (!collision.gameObject.CompareTag("Goal"))
+        {
+            if (bounceSound != null)
+            {
+                audioSource.PlayOneShot(bounceSound);
+            }
+        }
+
+        // Goal íƒœê·¸ì™€ ì¶©ëŒí•œ ê²½ìš°, GameManagerë¥¼ í†µí•´ ì ìˆ˜ ì²˜ë¦¬
         if (collision.gameObject.CompareTag("Goal"))
         {
-            spriteRenderer.color = Color.red;
-            rb.velocity = Vector2.zero;
-            rb.isKinematic = true;
-
-            // °ñ´ë À§Ä¡·Î ½ÂÆĞ ÆÇ´Ü (ÁÂÃøÀÌ¸é ÆĞ¹è, ¿ìÃøÀÌ¸é ½Â¸®)
             if (collision.transform.position.x < 0)
-                loseText.SetActive(true); // ¿ŞÂÊ º®ÀÌ¸é ÆĞ¹è
+            {
+                audioSource.PlayOneShot(AiScoredSound);
+                GameManager.instance.ScorePoint(false); // ì™¼ìª½ ê³¨ëŒ€: ìƒëŒ€ ì ìˆ˜
+            }
             else
-                winText.SetActive(true);  // ¿À¸¥ÂÊ º®ÀÌ¸é ½Â¸®
+            {
+                audioSource.PlayOneShot(PlayerScoredSound);
+                GameManager.instance.ScorePoint(true);  // ì˜¤ë¥¸ìª½ ê³¨ëŒ€: í”Œë ˆì´ì–´ ì ìˆ˜
+            }
         }
     }
 }
